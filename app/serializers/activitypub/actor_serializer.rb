@@ -7,6 +7,8 @@ class ActivityPub::ActorSerializer < ActiveModel::Serializer
              :inbox, :outbox, :preferred_username,
              :name, :summary, :icon, :image
 
+  has_one :public_key, serializer: ActivityPub::PublicKeySerializer, if: :root?
+
   def id
     account_url(object)
   end
@@ -49,5 +51,13 @@ class ActivityPub::ActorSerializer < ActiveModel::Serializer
 
   def image
     full_asset_url(object.header.url(:original))
+  end
+
+  def public_key
+    object
+  end
+
+  def root?
+    instance_options[:serializer_context_class].nil?
   end
 end
